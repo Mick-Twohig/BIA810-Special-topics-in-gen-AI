@@ -8,7 +8,7 @@ from pypaperretriever import PaperRetriever
 
 @tool
 def search_pubmed(query:str)->List[object]:
-    """Search research papers related to a pharmaceutical query"""
+    """Search research papers related to a pharmaceutical query. The query will return a title, a pmid and a doi"""
     results = pubmed_search(query)
     if results['status_code'] == 200:
         # we have a field 'indices' that will be one or more PubMed ID's
@@ -17,7 +17,7 @@ def search_pubmed(query:str)->List[object]:
             # content_dict has the pubmedID as the key; value is the related metadata
             content_dict = contents['contents']
 
-            return ["voodoo"] # todo
+            return content_dict
         else:
             return ["no data"]
         # todo....
@@ -27,17 +27,25 @@ def search_pubmed(query:str)->List[object]:
 
 
 @tool
-def read_pdf(file_path: str) -> str:
-    """Extract text from a scientific paper"""
-    logging.info(f"In read_pdf with filepath: {file_path}")
+def read_pdf(pmid:str = None, doi:str = None) -> str:
+    """Extract text from a scientific paper. We can use either PMID or DOI"""
+    logging.info(f"In read_pdf with pmid: '{pmid}' doi: '{doi}'")
+    content = None
+    if pmid is None and doi is None:
+        logging.error("read_pdf call with no parameters")
+        raise RuntimeError("Missing parameters")
+    if doi is not None:
+        content = fetch_paper_by_doi(doi=doi)
 
+    if pmid is not None:
+        content = fetch_paper_by_pubmed_id(pmid=pmid)
     text = ""
     try:
-        reader = PdfReader(file_path)
+        reader = PdfReader(content)
         for page in reader.pages:
             text += page.extract_text()
     except FileNotFoundError as fnf:
-        logging.error(f"File not found: {file_path}")
+        logging.error(f"File not found: ")
     return text
     return lorem.paragraph()
 
@@ -53,8 +61,10 @@ def summarize_research(text: str) -> str:
 def fetch_paper_by_doi(doi: str)->object:
     """Fetch paper using Digital Object ID (DOI)"""
     retriever = PaperRetriever(
+        email='test@mail.com',
         doi=doi,
-        download_directory="PDF"
+        download_directory="PDF",
+        allow_scihub=True
     )
     retriever.download()
     return "requested"
@@ -63,8 +73,10 @@ def fetch_paper_by_doi(doi: str)->object:
 def fetch_paper_by_pubmed_id(pmid: str)->object:
     """Fetch paper using PubMed ID"""
     retriever = PaperRetriever(
+        email='test@mail.com',
         pmid=pmid,
-        download_directory="PDF"
+        download_directory="PDF",
+        allow_scihub=True
     )
     retriever.download()
     return "requested"

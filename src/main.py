@@ -41,7 +41,9 @@ if prompt := st.chat_input("Enter a query"):
         st.markdown(prompt)
     st.session_state.messages.append({'role': 'user', 'content': prompt})
     resp = agent.invoke({'input': prompt})
-    st.write_stream(resp)
+    print(resp['output'])
+    st.session_state.messages.append({'role': 'system', 'content': resp['output']})
+    st.write(resp["output"])
 # st.text_input("Enter a query", key='query')
 #
 # st.button("Submit", on_click=run_query)

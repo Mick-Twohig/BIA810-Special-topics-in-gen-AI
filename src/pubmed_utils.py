@@ -39,8 +39,13 @@ def get_pubmed_contents(ids: List[int]) -> Dict[str, object]:
         docs = et.findall('DocSum')
         for summary in docs:
             id = summary.find('Id').text
+            title = ''
             pmid = ''
             doi = ''
+            try:
+                title = summary.find("Item[@Name='Title']").text
+            except KeyError:
+                title = 'Untitled'
             try:
                 pmid = summary.find("Item[@Name='ArticleIds']/Item[@Name='pubmed']").text
             except KeyError:
@@ -50,8 +55,8 @@ def get_pubmed_contents(ids: List[int]) -> Dict[str, object]:
             except KeyError:
                 pass
 
-            content_dict[id] = [{"PMID": pmid, "doi": doi}]
-            print(f"found ID: {id}")
+            content_dict[id] = [{"title": title, "PMID": pmid, "doi": doi}]
+
 
 
         return {"status_code": response.status_code, "contents": content_dict}
