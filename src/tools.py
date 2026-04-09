@@ -63,9 +63,9 @@ def summarize_research(text: str) -> str:
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Arial", size=12)
-    pdf.write(text=text, h=3)
+    pdf.write(text=text, h=7)
 #    pdf.cell(200, 10, txt=text, ln=True, align='C')
-    pdf.output(f"results/filename")
+    pdf.output(f"results/{filename}")
     return f"Wrote pdf file {filename}"
 
 #@tool
