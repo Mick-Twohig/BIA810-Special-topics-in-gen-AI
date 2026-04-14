@@ -11,7 +11,7 @@ import time
 from glob import glob
 from urllib.parse import urljoin, urlparse
 
-import fitz as pymupdf
+import pymupdf
 import requests
 from bs4 import BeautifulSoup
 from typing import Self

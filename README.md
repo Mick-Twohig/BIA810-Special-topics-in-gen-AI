@@ -23,7 +23,7 @@ for UI, and some of the common python libraries.
 and download papers. It can start from Digital Object Identifier(doi) or PubMedID.
 It will search a variety of sources, and prioritizes getting the papers using legitimate means.
 ##### Installation
-```aiignore
+```
 pip install git+https://github.com/josephisaacturner/pypaperretriever.git
 ```
 
@@ -33,16 +33,28 @@ pip install git+https://github.com/josephisaacturner/pypaperretriever.git
 The project relies on a local [Ollama](https://ollama.com/) instance. Installation of this is outside of our current scope, 
 but is fortunately a well-documented process on the project website.
 
-The project also needs a suitable local model. We use `llama3:8b`, which is a reasonable
-model, and comes in at around 4.7GB, so not too demanding in terms of storage.
-The model can be fetched as follows:
+The project requires the following local models, all of which can be pulled via Ollama:
 ```console
+$ ollama pull qwen3:8b
 $ ollama pull llama3:8b
+$ ollama pull gpt-oss:latest
 ```
 
-#### Application
-Our application provides a [Streamlit](https://streamlit.io/) user interface. To run the application using streamlit, 
-navigate to the project location and enter the following:
+## Setup
+
+### Python Version
+**Python 3.13 is required.** The `audioop-lts` dependency is a backport of the `audioop` module
+that was removed in Python 3.13, and is only needed (and only compatible) with Python 3.13+.
+
+### Install dependencies
 ```console
-$ streamlit run main.py
+$ pip install -r requirements.txt
+```
+
+## Running the Application
+
+Our application provides a [Streamlit](https://streamlit.io/) user interface. To run the application,
+navigate to the project root and point Streamlit at the `src` directory:
+```console
+$ streamlit run src/main.py
 ```
