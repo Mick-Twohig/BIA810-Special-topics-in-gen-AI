@@ -139,7 +139,7 @@ def fetch_paper_by_doi(doi: str) -> object:
         allow_scihub=True
     )
     download = retriever.download()
-    return os.path.join(download.filepath, download.filename)
+    return os.path.join(download.filename)
 
 from dataclasses import  dataclass
 @dataclass()
@@ -203,7 +203,7 @@ def fetch_paper_by_pubmed_id(pmid: object) -> object:
     )
     download = retriever.download()
     if download.is_downloaded:
-        return os.path.join(download.filepath, download.filename)
+        return os.path.join(download.filename)
     else:
         log.warning(f"fetch_paper_by_pubmed_id - failed to download pmid {pm_id}")
         return ""
