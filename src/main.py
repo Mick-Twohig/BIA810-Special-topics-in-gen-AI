@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 
 from agent import create_agent
 from random import shuffle
@@ -100,7 +101,7 @@ def _display_response(response) -> None:
 #-------------
 
 st.set_page_config(page_title=app_title, layout='wide')
-st.logo(image="../images/Pfizer_Logo_White.png", size="large", link="https://www.pfizer.com")
+st.logo(image=str(Path(__file__).parent.parent / "images" / "Pfizer_Logo_White.png"), size="large", link="https://www.pfizer.com")
 st.sidebar.markdown("## Configuration")
 model = st.sidebar.selectbox("Model Name", llm_models)
 temperature = st.sidebar.slider("Temperature", min_value=0.0, max_value=2.0, value=0.0, step=0.05)
