@@ -104,6 +104,9 @@ st.logo(image="../images/Pfizer_Logo_White.png", size="large", link="https://www
 st.sidebar.markdown("## Configuration")
 model = st.sidebar.selectbox("Model Name", llm_models)
 temperature = st.sidebar.slider("Temperature", min_value=0.0, max_value=2.0, value=0.0, step=0.05)
+max_pubmed_docs = st.sidebar.number_input("Max PubMed Docs", min_value=1, max_value=20, value=5)
+st.session_state.max_pubmed_docs = max_pubmed_docs
+
 st.sidebar.button("Disclaimer️", on_click=disclaimer)
 
 tab1, tab2 = st.tabs(["Ask a Question", "ℹ️ About"])
@@ -127,6 +130,7 @@ with tab1:
 
     if submit and question:
         with st.spinner("Researching..."):
+            st.session_state.question = question
             try:
                 response = agent.invoke({'input': question})
                 # Add to conversation history
@@ -148,21 +152,6 @@ with tab1:
                 st.markdown(f"**Question:** {msg['question']}")
                 st.markdown('---')
                 _display_response(msg['response'])
-    # def run_query():
-    #     results = agent.invoke({"input": st.session_state.query})
-    #     st.write(results['output'])
-    #
-    # for message in st.session_state.messages:
-    #     with st.chat_message(message['role']):
-    #         st.markdown(message['content'])
-    #
-    # if prompt := st.chat_input("Enter a query"):
-    #     with st.chat_message('user'):
-    #         st.markdown(prompt)
-    #     st.session_state.messages.append({'role': 'user', 'content': prompt})
-    #     resp = agent.invoke({'input': prompt})
-    #     st.session_state.messages.append({'role': 'system', 'content': resp['output']})
-    #     st.write(resp["output"])
 
 with tab2:
     st.write(f"**{app_title}**")
