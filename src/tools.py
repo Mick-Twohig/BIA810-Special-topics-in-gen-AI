@@ -52,11 +52,12 @@ def read_pdf(pmid:str = None, doi:str = None) -> str:
         if content:
             reader = PdfReader(content)
             for page in reader.pages:
-                text += page.extract_text()
-    except FileNotFoundError as fnf:
-        logging.error(f"File not found: ")
+                text += page.extract_text() or ""
+    except FileNotFoundError:
+        logging.error(f"PDF file not found at path: {content}")
+    except Exception as e:
+        logging.error(f"Error reading PDF at {content}: {e}")
     return text
-    return lorem.paragraph()
 
 @tool
 def summarize_research(text: str) -> str:
@@ -202,8 +203,7 @@ def fetch_paper_by_pubmed_id(pmid: object) -> object:
     )
     download = retriever.download()
     if download.is_downloaded:
-        with open(download.filename, 'rb') as f:
-            return f.read()
+        return os.path.join(download.filepath, download.filename)
     else:
         log.warning(f"fetch_paper_by_pubmed_id - failed to download pmid {pm_id}")
         return ""
