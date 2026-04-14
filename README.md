@@ -33,11 +33,10 @@ pip install git+https://github.com/josephisaacturner/pypaperretriever.git
 The project relies on a local [Ollama](https://ollama.com/) instance. Installation of this is outside of our current scope, 
 but is fortunately a well-documented process on the project website.
 
-The project also needs a suitable local model. We use `llama3:8b`, which is a reasonable
-model, and comes in at around 4.7GB, so not too demanding in terms of storage.
-The model can be fetched as follows:
+The project also needs suitable local models. The following models are supported and can be pulled via Ollama:
 ```console
 $ ollama pull llama3:8b
+$ ollama pull qwen3:8b
 ```
 
 ## Setup
