@@ -289,7 +289,9 @@ class PaperRetriever:
             Self: This instance.
 
         """
-        mirror_list = ["https://sci-hub.st", "https://sci-hub.ru", "https://sci-hub.se", "https://sci-hub.do",
+        mirror_list = ["https://sci-hub.st", "https://sci-hub.ru",
+                       #"https://sci-hub.se",
+                       "https://sci-hub.do",
                        "https://sci-hub.box", "https://sci-hub.red"]
         urls = [f"{mirror}/{decode_doi(self.doi)}" for mirror in mirror_list]
 

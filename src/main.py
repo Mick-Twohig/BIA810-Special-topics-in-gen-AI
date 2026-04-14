@@ -111,6 +111,8 @@ with st.sidebar:
     st.markdown('<div class="sidebar-label">Configuration</div>', unsafe_allow_html=True)
     model = st.selectbox("Model", llm_models, label_visibility="visible")
     temperature = st.slider("Temperature", min_value=0.0, max_value=2.0, value=0.0, step=0.05)
+    max_pubmed_docs = st.sidebar.number_input("Max PubMed Docs", min_value=1, max_value=20, value=5)
+    st.session_state.max_pubmed_docs = max_pubmed_docs
     st.button("Disclaimer", on_click=disclaimer)
 
     st.markdown("""

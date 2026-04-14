@@ -15,7 +15,7 @@ import json
 
 log = logging.getLogger(__name__)
 
-references = {}
+references = []
 
 @tool
 def search_pubmed(query:str)->List[object]:
@@ -97,7 +97,11 @@ def summarize_research(text: str) -> str:
     pdf.set_font("Times", size=12)
     references_text = ""
     for reference in references:
-        references_text = (f"{references_text}\n,{reference.identifier} {reference.name}")
+        # references_text = (f"{references_text}\n,{reference.identifier} {reference.name}")
+        new_references_text = ""
+        for k, v in reference.items():
+            new_references_text = f"{new_references_text}\n{k}: {v}"
+        references_text = f"{new_references_text}\n\n"
     if references_text == "":
         references_text = "References not listed out"
     pdf.multi_cell(0, 5, text=references_text)
@@ -143,21 +147,33 @@ class ReferenceInfo:
     authors: List[str]
 
 @tool
-def store_reference_information(referenceInfo: ReferenceInfo):
+def store_reference_information(referenceInfo: object):
     """This function will store a document reference. The document reference will have an identifier and a document
     name. The document reference will have a list of one or more authors."""
-    references[referenceInfo.identifier] = {
-        "identifier": referenceInfo.identifier,
-        "name": referenceInfo.name,
-        "authors": referenceInfo.authors
-    }
-
+    references.append(referenceInfo)
+    # try:
+    #     references[referenceInfo.identifier] = {
+    #         "identifier": referenceInfo.identifier,
+    #         "name": referenceInfo.name,
+    #         "authors": referenceInfo.authors
+    #     }
+    # except KeyError:
+    #     log.error(f"Key error in store_reference_information. Received: {referenceInfo}")
 
 #@tool
 def fetch_paper_by_pubmed_id(pmid: object)->object:
     """Fetch paper using PubMed ID"""
     json_str = json.loads(pmid)
-    pm_id = json_str['pmid']
+    try:
+        pm_id = json_str['pmid']
+    except KeyError:
+        log.error(f"Unable to get pmid: got {pmid}")
+        # perhaps agent has called me with a DOI?
+        try:
+            doi = json_str['doi']
+            return fetch_paper_by_doi(doi)
+        except KeyError:
+            pass # hosed....
     log.info(f"fetch_paper_by_pubmed_id: pmid = {pm_id}")
     filename = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
 
@@ -175,7 +191,7 @@ def fetch_paper_by_pubmed_id(pmid: object)->object:
     )
     download = retriever.download()
     if download.is_downloaded:
-        with open(os.path.join(download.filepath, download.filename), 'rb') as f:
+        with open(download.filename, 'rb') as f:
             contents = f.read()
             return contents
     else:
