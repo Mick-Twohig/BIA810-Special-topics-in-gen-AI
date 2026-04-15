@@ -36,7 +36,7 @@ _llm: ChatOllama | None = None
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 def _unique_stem() -> str:
-    ts   = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    ts   = datetime.datetime.now().strftime("%Y-%m-%d-%H_%M_%S")
     rand = "".join(random.choices(string.ascii_uppercase + string.digits, k=8))
     return f"{ts}_{rand}"
 

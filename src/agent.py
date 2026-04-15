@@ -57,5 +57,5 @@ def create_agent(model: str, temperature: float = 0):
         verbose=True,
         handle_parsing_errors=True,
         max_iterations=8,
-        early_stopping_method="generate",
+        early_stopping_method="force",
     )

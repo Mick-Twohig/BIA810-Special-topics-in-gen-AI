@@ -132,6 +132,7 @@ with st.sidebar:
     temperature = st.slider("Temperature", min_value=0.0, max_value=2.0, value=0.0, step=0.05)
     max_pubmed_docs = st.sidebar.number_input("Max PubMed Docs", min_value=1, max_value=20, value=5)
     st.session_state.max_pubmed_docs = max_pubmed_docs
+
     st.button("Disclaimer", on_click=disclaimer)
 
     status = _check_status(model)
@@ -145,7 +146,6 @@ with st.sidebar:
         </div>
     </div>
     """, unsafe_allow_html=True)
-
 
 # ── Tabs ──────────────────────────────────────────────────────────────────────
 tab1, tab2 = st.tabs(["Ask a Question", "About"])
