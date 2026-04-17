@@ -5,6 +5,7 @@ from urllib.parse import quote, unquote
 
 from Bio import Entrez
 import requests
+from rate_limiter import rate_limited_get
 
 
 def entrez_efetch(email: str, id: str) -> Any:
@@ -76,7 +77,7 @@ def doi_to_pmid(doi: str, email: str) -> str | None:
     try:
         url_base = "https://www.ncbi.nlm.nih.gov/pmc/utils/idconv/v1.0/?"
         url = f"{url_base}ids={doi}&format=json"
-        response = requests.get(url)
+        response = rate_limited_get(url)
         if response.status_code == 200:
             data = response.json()
             pmid = data.get("records", [{}])[0].get("pmid", None)
