@@ -17,6 +17,7 @@ from bs4 import BeautifulSoup
 from typing import Self
 
 from .utils import decode_doi, doi_to_pmid, encode_doi, entrez_efetch, pmid_to_doi
+from rate_limiter import rate_limited_get
 
 
 class PaperRetriever:
@@ -119,7 +120,7 @@ class PaperRetriever:
         """
 
         url = f"https://api.unpaywall.org/v2/{decode_doi(self.doi)}?email={self.email}"
-        response = requests.get(url)
+        response = rate_limited_get(url)
         
         if response.status_code == 200:
             data = response.json()
@@ -169,7 +170,7 @@ class PaperRetriever:
 
             article_link = f'https://pmc.ncbi.nlm.nih.gov/articles/{pmc_id}/'
 
-            response = requests.get(article_link, headers={"User-Agent": random.choice(self.user_agents)})
+            response = rate_limited_get(article_link, headers={"User-Agent": random.choice(self.user_agents)})
 
             if response.status_code == 200:
                 soup = BeautifulSoup(response.content, 'html.parser')
@@ -200,7 +201,7 @@ class PaperRetriever:
         pdf_urls = []
         
         try:
-            response = requests.get(full_url)
+            response = rate_limited_get(full_url)
             if response.status_code == 200:
                 data = response.json()
                 primary_url = data.get('message', {}).get('URL', None)
@@ -211,7 +212,7 @@ class PaperRetriever:
             
             for url in urls:
                 try:
-                    response = requests.get(url, headers={
+                    response = rate_limited_get(url, headers={
                         "User-Agent":  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
                                     "AppleWebKit/537.36 (KHTML, like Gecko) " +
                                     "Chrome/58.0.3029.110 Safari/537.3"
@@ -304,7 +305,7 @@ class PaperRetriever:
                 "Referer": "https://www.google.com/",
             }
             try:
-                r = requests.get(url, headers=headers)
+                r = rate_limited_get(url, headers=headers)
                 if r.status_code == 200:
                     if len(r.text) < 1:
                         print("""We probably got blocked by Sci-Hub for too many requests. 
@@ -348,7 +349,7 @@ class PaperRetriever:
 
         for pdf_url in self.pdf_urls:
             try:
-                response = requests.get(pdf_url, headers=headers, stream=True)
+                response = rate_limited_get(pdf_url, headers=headers, stream=True)
                 if response.status_code == 200:
                     with open(pdf_path, 'wb') as f:
                         for chunk in response.iter_content(chunk_size=8192):

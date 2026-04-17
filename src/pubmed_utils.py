@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 from typing import List, Dict
 import logging
 import streamlit as st
+from rate_limiter import rate_limited_get
 
 log = logging.getLogger(__name__)
 
@@ -20,7 +21,7 @@ def pubmed_search(query: str) -> str:
 # Total number of UIDs from the retrieved set to be shown in the XML output (default=20). By default, ESearch only
 # includes the first 20 UIDs retrieved in the XML output. ref: https://www.ncbi.nlm.nih.gov/books/NBK25499/
 
-    response = requests.get(url=url, params=params)
+    response = rate_limited_get(url=url, params=params)
     if response.status_code == 200:
         indices = []
         et = ET.fromstring(response.text)
@@ -43,7 +44,7 @@ def get_pubmed_contents(ids: List[int]) -> Dict[str, object]:
         'db': 'pubmed',
         'id': ",".join(ids)
     }
-    response = requests.get(url=url, params=params)
+    response = rate_limited_get(url=url, params=params)
     if response.status_code == 200:
         et = ET.fromstring(response.content.decode())
         docs = et.findall('DocSum')
